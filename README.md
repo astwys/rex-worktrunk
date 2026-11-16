@@ -1,13 +1,13 @@
 # rex-worktrunk
 
-A [Rex](https://www.superlogical.com/rex) plugin that opens the [Worktrunk](https://worktrunk.dev) worktree picker in a floating pane. The worktree you pick opens in a new tab of the current session, named after its branch.
+A [Rex](https://www.superlogical.com/rex) plugin that opens the [Worktrunk](https://worktrunk.dev) worktree picker in a floating pane. It opens the worktree you pick in a new tab of the current session and names the tab after the branch.
 
 ![The Worktrees picker listing branches with a diff preview](screenshot.png)
 
 ## Requirements
 
 - Rex, tested with 0.1.0-preview.19
-- the `rex` CLI on your `PATH`, because the picker calls `rex window new` to open the tab
+- the `rex` CLI on your `PATH`, because Worktrunk runs `rex window new` to open the tab
 - [Worktrunk](https://worktrunk.dev) (`wt`), tested with 0.81.0. Install it with `brew install worktrunk`.
 
 ## Install
@@ -29,12 +29,12 @@ Then run `rex config reload`.
 
 ## Usage
 
-Press the key, or pick "Worktrees…" in the command palette. The picker runs `wt switch --branches` in the focused pane's folder, so it lists that repo's worktrees and its local branches that have none yet.
+Press the key, or pick "Worktrees…" in the command palette. The plugin runs `wt switch --branches` in the focused pane's folder. The picker lists that repo's worktrees and the local branches that don't have one yet.
 
 | Key | Action |
 | --- | --- |
-| Enter | Open the selected worktree in a new tab |
-| Alt-c | Create a worktree named after the text you typed |
+| Enter | Open the selected worktree in a new tab. For a branch without a worktree, Worktrunk creates one first. |
+| Alt-c | Create a worktree for a new branch named after the text you typed |
 | Alt-x | Remove the selected worktree |
 | Esc | Close the picker |
 
