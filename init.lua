@@ -24,10 +24,12 @@ rex.action{
         flavor  = terminal .. ".shell",
         options = {
           cwd     = cwd,
+          -- detach first; closing the focused layer would refocus the old tab
           command = {
-            "wt", "switch", "--branches", "--no-cd", "-x", "rex", "--",
-            "window", "new", "-s", ctx.session_id, "{{ branch }}",
-            "-c", "{{ worktree_path }}",
+            "wt", "switch", "--branches", "--no-cd", "-x", "sh", "--", "-c",
+            [[rex api call -s "$0" session.detach_block "{\"block_id\":\"$REX_BLOCK\"}" >/dev/null
+              exec rex window new -s "$0" "$1" -c "$2"]],
+            ctx.session_id, "{{ branch }}", "{{ worktree_path }}",
           },
         },
       },
