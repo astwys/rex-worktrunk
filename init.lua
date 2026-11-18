@@ -21,13 +21,11 @@ end
 local shell = os.getenv("SHELL") or "/bin/zsh"
 
 local function wt(args, cwd)
-  local r, err = rex.exec({ shell, "-lc", 'exec wt "$@"', "wt", unpack(args) }, { cwd = cwd })
-  if r == nil then error(err, 0) end
+  local r = rex.exec({ shell, "-lc", 'exec wt "$@"', "wt", unpack(args) }, { cwd = cwd })
   if not r.ok then error(r.stderr ~= "" and r.stderr or "wt " .. args[1] .. " failed", 0) end
   return r.stdout
 end
 
--- the repo's worktrees and local branches, as wt list reports them
 local function rows(cwd)
   local out = {}
   for _, row in ipairs(rex.json.decode(wt({ "list", "--format=json", "--branches" }, cwd)).items) do
