@@ -1,14 +1,14 @@
 # rex-worktrunk
 
-A [Rex](https://www.superlogical.com/rex) plugin that opens the [Worktrunk](https://worktrunk.dev) worktree picker in a floating pane. It opens the worktree you pick in a new tab of the current session and names the tab after the branch.
+A [Rex](https://www.superlogical.com/rex) plugin that lists [Worktrunk](https://worktrunk.dev) worktrees in the command palette. It opens the worktree you pick in a new tab of the current session and names the tab after the branch.
 
 ![The Worktrees picker listing branches with a diff preview](screenshot.png)
 
 ## Requirements
 
-- Rex, tested with 0.1.0-preview.19
-- the `rex` CLI on your `PATH`, because Worktrunk runs `rex window new` to open the tab
-- [Worktrunk](https://worktrunk.dev) (`wt`), tested with 0.81.0. Install it with `brew install worktrunk`.
+- Rex server 0.1.0-preview.21 or later, for command palette prompts (`rex.ui`)
+- the `rex` CLI on your `PATH`, because creating a worktree runs `rex window new` to open the tab
+- [Worktrunk](https://worktrunk.dev) (`wt`) on your login shell's `PATH`, tested with 0.81.0. Install it with `brew install worktrunk`.
 
 ## Install
 
@@ -29,21 +29,17 @@ Then run `rex config reload`.
 
 ## Usage
 
-Press the key, or pick "Worktrees…" in the command palette. The plugin runs `wt switch --branches` in the focused pane's folder. The picker lists that repo's worktrees and the local branches that don't have one yet.
+Press the key, or pick "Worktrees…" in the command palette. The palette lists the worktrees and local branches of the focused pane's repo, with each worktree's path and Worktrunk's status symbols.
 
-| Key | Action |
-| --- | --- |
-| Enter | Open the selected worktree in a new tab. For a branch without a worktree, Worktrunk creates one first. |
-| Alt-c | Create a worktree for a new branch named after the text you typed |
-| Alt-x | Remove the selected worktree |
-| Esc | Close the picker |
+- Pick a branch that has a worktree to open it in a new tab.
+- Pick a branch without one, or type a new name and choose it, to have Worktrunk create the worktree. This runs `wt switch` in a floating pane so you can see its hooks, then opens the tab.
+- Pick "Remove Worktrees…" in the command palette, tick the worktrees to remove, and press Cmd-Return. The plugin runs `wt remove` on them, which refuses worktrees with uncommitted changes.
 
-These are Worktrunk's own picker keys. `wt switch --help` lists the rest.
-
-To start the picker in another repo, pass its path:
+To list another repo, pass its path:
 
 ```sh
 rex do worktrunk cwd=$HOME/code/my-app
+rex do worktrunk_remove cwd=$HOME/code/my-app
 ```
 
 ## License
