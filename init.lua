@@ -16,17 +16,21 @@ local function repo_cwd(ctx, args)
   return args.cwd or (ctx.block_id and focused_cwd(ctx.block_id))
 end
 
-local function run(argv, cwd)
-  local r, err = rex.exec(argv, { cwd = cwd })
+-- The server's PATH lacks Homebrew and friends, so wt runs through the login
+-- shell, which gives it the same PATH a pane gets.
+local shell = os.getenv("SHELL") or "/bin/zsh"
+
+local function wt(args, cwd)
+  local r, err = rex.exec({ shell, "-lc", 'exec wt "$@"', "wt", unpack(args) }, { cwd = cwd })
   if r == nil then error(err, 0) end
-  if not r.ok then error(r.stderr ~= "" and r.stderr or argv[2] .. " failed", 0) end
+  if not r.ok then error(r.stderr ~= "" and r.stderr or "wt " .. args[1] .. " failed", 0) end
   return r.stdout
 end
 
 -- the repo's worktrees and local branches, as wt list reports them
 local function rows(cwd)
   local out = {}
-  for _, row in ipairs(rex.json.decode(run({ "wt", "list", "--format=json", "--branches" }, cwd)).items) do
+  for _, row in ipairs(rex.json.decode(wt({ "list", "--format=json", "--branches" }, cwd)).items) do
     -- a detached worktree has no branch to switch to
     if row.branch then out[#out + 1] = row end
   end
@@ -114,7 +118,7 @@ rex.action{
       items       = items,
     }
     if branches == nil or #branches == 0 then return end
-    run({ "wt", "remove", unpack(branches) }, cwd)
+    wt({ "remove", unpack(branches) }, cwd)
     return "Removed " .. table.concat(branches, ", ")
   end,
 }
